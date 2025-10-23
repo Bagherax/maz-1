@@ -1,0 +1,9 @@
+{
+  "name": "Copy of Core Infrastructure Showcase",
+  "description": "An interactive application demonstrating core frontend infrastructure components like a React shell, theming, localization, and PWA setup.",
+  "requestFramePermissions": [
+    "geolocation",
+    "microphone",
+    "camera"
+  ]
+}

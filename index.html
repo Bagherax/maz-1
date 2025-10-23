@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Core Infrastructure Showcase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            animation: {
+              'slide-down-fast': 'slide-down-fast 0.3s ease-out forwards',
+              'fade-in': 'fade-in 0.5s ease-out forwards',
+              'fade-in-fast': 'fade-in-fast 0.3s ease-out forwards',
+              'scale-up': 'scale-up 0.2s ease-out forwards',
+              'bounce-sm': 'bounce-sm 1.5s infinite',
+              'shine': 'shine 1s forwards ease-in-out',
+              'smoke-flow': 'smoke-flow 4s ease-in-out infinite',
+            },
+            keyframes: {
+              'slide-down-fast': {
+                '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'fade-in': {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              'fade-in-fast': {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              'scale-up': {
+                '0%': { transform: 'scale(1)' },
+                '100%': { transform: 'scale(1.15)' },
+              },
+              'bounce-sm': {
+                '0%, 100%': {
+                  transform: 'translateY(-10%)',
+                  animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)'
+                },
+                '50%': {
+                  transform: 'translateY(0)',
+                  animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)'
+                }
+              },
+              'shine': {
+                '100%': { left: '125%' },
+              },
+              'smoke-flow': {
+                '0%': { background-position: '0% 50%' },
+                '50%': { background-position: '100% 50%' },
+                '100%': { background-position: '0% 50%' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <style>
+      .ripple {
+        position: relative;
+        overflow: hidden;
+        transform: translate3d(0, 0, 0); /* Fix for Safari overflow issue */
+      }
+      .ripple:after {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+        background-repeat: no-repeat;
+        background-position: 50%;
+        transform: scale(10, 10);
+        opacity: 0;
+        transition: transform .5s, opacity 1s;
+      }
+      .ripple:active:after {
+        transform: scale(0, 0);
+        opacity: .3;
+        transition: 0s;
+      }
+
+      .chatBtn {
+        width: 55px;
+        height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: none;
+        background-color: #FFE53B;
+        background-image: linear-gradient(147deg, #FFE53B, #FF2525,#FFE53B);
+        cursor: pointer;
+        padding-top: 3px;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.164);
+        position: relative;
+        background-size: 300%;
+        background-position: left;
+        transition-duration: 1s;
+      }
+
+      .tooltip {
+        position: absolute;
+        top: -40px;
+        opacity: 0;
+        background-color: rgb(255, 180, 82);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition-duration: .5s;
+        pointer-events: none;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+
+      .chatBtn:hover .tooltip {
+        opacity: 1;
+        transition-duration: .5s;
+      }
+
+      .chatBtn:hover {
+        background-position: right;
+        transition-duration: 1s;
+      }
+
+      .animated-check-icon {
+        display: inline-block;
+        vertical-align: middle;
+        margin-inline-end: 0.25rem; /* 4px */
+      }
+    
+      .animated-check-icon .check-path {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        animation: draw-check 0.4s 0.2s ease-out forwards;
+      }
+    
+      @keyframes draw-check {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+    </style>
+
+    <!-- PWA Meta Tags (Manifest would be linked here) -->
+    <meta name="theme-color" content="#ffffff">
+    <!-- <link rel="manifest" href="/manifest.json"> -->
+
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.run/@google/genai",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^18.2.0/",
+    "react": "https://aistudiocdn.com/react@^18.2.0",
+    "react/": "https://aistudiocdn.com/react@^18.2.0/"
+  }
+}
+</script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+
+    <!-- 
+      PWA Service Worker Registration would go here.
+      Example:
+      <script>
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js').then(registration => {
+              console.log('SW registered: ', registration);
+            }).catch(registrationError => {
+              console.log('SW registration failed: ', registrationError);
+            });
+          });
+        }
+      </script>
+    -->
+</body>
+</html>
