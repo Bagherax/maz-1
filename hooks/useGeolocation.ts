@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 interface LocationState {
   lat: number;
   lng: number;
+  city?: string;
+  country?: string;
 }
 
 interface GeolocationHookResult {
@@ -27,7 +29,7 @@ const getBrowserLocation = (options: PositionOptions): Promise<GeolocationPositi
 
 /**
  * Gets an approximate location based on the user's IP address.
- * @returns A promise that resolves with the latitude and longitude.
+ * @returns A promise that resolves with the latitude, longitude, city, and country.
  */
 const getIpLocation = async (): Promise<LocationState> => {
     const response = await fetch('https://ipapi.co/json/');
@@ -38,12 +40,13 @@ const getIpLocation = async (): Promise<LocationState> => {
     if (typeof data.latitude !== 'number' || typeof data.longitude !== 'number') {
         throw new Error('Invalid location data from IP API.');
     }
-    return { lat: data.latitude, lng: data.longitude };
+    return { lat: data.latitude, lng: data.longitude, city: data.city, country: data.country_name };
 };
 
 /**
  * A robust geolocation hook that first tries for high-accuracy GPS/Wi-Fi location
  * and falls back to a lower-accuracy IP-based location if the first attempt fails.
+ * It also performs reverse geocoding for browser-based locations.
  */
 export const useGeolocation = (): GeolocationHookResult => {
   const [location, setLocation] = useState<LocationState | null>(null);
@@ -61,31 +64,49 @@ export const useGeolocation = (): GeolocationHookResult => {
                 timeout: 10000, // 10-second timeout
                 maximumAge: 600000 // Cache for 10 minutes
             });
-            if (isMounted) {
-                setLocation({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                });
-                setLoading(false);
+
+            if (!isMounted) return;
+
+            const { latitude, longitude } = position.coords;
+            
+            // 2. Reverse geocode the coordinates using Nominatim
+            try {
+                const reverseGeoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en`;
+                const response = await fetch(reverseGeoUrl);
+                const data = await response.json();
+
+                if (isMounted) {
+                    const city = data.address.city || data.address.town || data.address.village;
+                    const country = data.address.country;
+                    setLocation({ lat: latitude, lng: longitude, city, country });
+                }
+            } catch (reverseGeocodeError) {
+                console.warn('Reverse geocoding failed, using coordinates only.', reverseGeocodeError);
+                if (isMounted) {
+                     setLocation({ lat: latitude, lng: longitude });
+                }
             }
+
+            if (isMounted) setLoading(false);
             return; // Success, no need for fallback.
+
         } catch (browserError) {
             console.warn('High-accuracy geolocation failed, falling back to IP-based location.', browserError);
             
-            // 2. Fallback to IP-based location.
+            // 3. Fallback to IP-based location.
             try {
                 const ipLocation = await getIpLocation();
                  if (isMounted) {
                     setLocation(ipLocation);
-                    setLoading(false);
                  }
             } catch (ipError) {
                 console.error('IP-based geolocation also failed.', ipError);
                  if (isMounted) {
                     // Set the original, more informative browser error if available
                     setError(browserError instanceof Error ? browserError : (ipError as Error));
-                    setLoading(false);
                  }
+            } finally {
+                if(isMounted) setLoading(false);
             }
         }
     };

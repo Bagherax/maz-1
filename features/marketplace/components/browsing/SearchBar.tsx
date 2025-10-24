@@ -4,7 +4,6 @@ import { useLocalization } from '../../../../hooks/useLocalization';
 import { useDebounce } from '../../../../hooks/useDebounce';
 import { useMarketplaceUI } from '../../../../context/MarketplaceUIContext';
 import SearchExpansionPanel from './SearchExpansionPanel';
-import { useAuth } from '../../../../hooks/useAuth';
 import { useLocalStorage } from '../../../../hooks/usePersistentState';
 
 interface SearchBarProps {
@@ -15,12 +14,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onOpenAdminDashboard }) => {
   const {
     filters,
     onFilterChange,
-    isModeratorView,
-    toggleModeratorView,
   } = useMarketplaceUI();
 
   const { t } = useLocalization();
-  const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
   
   const [localQuery, setLocalQuery] = useState(filters.query);
@@ -40,14 +36,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onOpenAdminDashboard }) => {
         // Clear query if user deletes text
         onFilterChange({ query: '' });
     }
-  }, [debouncedQuery]);
+  }, [debouncedQuery, onFilterChange, setRecentSearches, filters.query]);
 
   useEffect(() => {
     // Sync local query if filters are reset externally
     if (filters.query !== localQuery) {
         setLocalQuery(filters.query);
     }
-  }, [filters.query]);
+  }, [filters.query, localQuery]);
   
   const searchBarRef = useRef<HTMLDivElement>(null);
 
@@ -144,7 +140,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onOpenAdminDashboard }) => {
       >
         <div className={`
           backdrop-blur-lg transition-all duration-300
-          ${isExpanded ? 'bg-white/80 dark:bg-gray-900/80 shadow-lg' : 'bg-transparent'}
+          bg-transparent ${isExpanded ? 'shadow-lg' : ''}
         `}>
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col items-center pt-4 pb-2">
@@ -168,33 +164,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onOpenAdminDashboard }) => {
                         />
                         <svg xmlns="http://www.w3.org/2000/svg" fill="" viewBox="0 0 24 24" className="search-icon"><g strokeWidth="0" id="SVGRepo_bgCarrier"></g><g strokeLinejoin="round" strokeLinecap="round" id="SVGRepo_tracerCarrier"></g><g id="SVGRepo_iconCarrier"> <rect fill="transparent" height="24" width="24"></rect> <path fill="" d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12ZM9 11.5C9 10.1193 10.1193 9 11.5 9C12.8807 9 14 10.1193 14 11.5C14 12.8807 12.8807 14 11.5 14C10.1193 14 9 12.8807 9 11.5ZM11.5 7C9.01472 7 7 9.01472 7 11.5C7 13.9853 9.01472 16 11.5 16C12.3805 16 13.202 15.7471 13.8957 15.31L15.2929 16.7071C15.6834 17.0976 16.3166 17.0976 16.7071 16.7071C17.0976 16.3166 17.0976 15.6834 16.7071 15.2929L15.31 13.8957C15.7471 13.202 16 12.3805 16 11.5C16 9.01472 13.9853 7 11.5 7Z" clipRule="evenodd" fillRule="evenodd"></path> </g></svg>
                     </div>
-
-                    {user?.isAdmin && (
-                        <>
-                          <button 
-                              className={`p-3 rounded-xl text-white hover:opacity-80 transition-colors flex-shrink-0 ${isModeratorView ? 'bg-indigo-600' : 'bg-gray-600'}`} 
-                              onClick={toggleModeratorView}
-                              aria-label={t('aria.toggle_moderator_view')}
-                          >
-                              <Icon name="moderator-view" className="w-6 h-6" />
-                          </button>
-                          <button 
-                              className="p-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors flex-shrink-0" 
-                              onClick={onOpenAdminDashboard}
-                              aria-label={t('aria.open_marketplace_admin_panel')}
-                          >
-                              <Icon name="shield-check" className="w-6 h-6" />
-                          </button>
-                        </>
-                    )}
-                    
-                    {/* Filter Button */}
-                    <button 
-                        className="p-3 rounded-xl bg-green-500 text-white hover:bg-green-600 transition-colors flex-shrink-0" 
-                        onClick={() => setIsExpanded(prev => !prev)}
-                    >
-                        <Icon name="adjustments-horizontal" className="w-6 h-6" />
-                    </button>
                 </div>
             </div>
 
@@ -206,6 +175,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onOpenAdminDashboard }) => {
                 setLocalQuery(query);
                 setIsExpanded(false);
               }}
+              onOpenAdminDashboard={onOpenAdminDashboard}
+              onClose={() => setIsExpanded(false)}
             />
           </div>
         </div>
