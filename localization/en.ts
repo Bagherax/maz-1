@@ -334,6 +334,9 @@ export const en = {
   'ad.create.step2': 'Media',
   'ad.create.step3': 'Delivery & Auction',
   'ad.create.step4': 'Review',
+  'ad.create.section.details': 'Ad Details',
+  'ad.create.section.media': 'Media',
+  'ad.create.section.delivery_auction': 'Delivery & Auction',
   'ad.create.next_step': 'Next Step',
   'ad.create.prev_step': 'Previous Step',
   'ad.create.post_ad': 'Post Ad',
@@ -439,6 +442,8 @@ export const en = {
   'delivery.create_days_placeholder': 'e.g., 3-5',
   'delivery.create_instructions_placeholder': 'Provide pickup address and available times...',
   'delivery.create_international_label': 'Allow International Shipping',
+  'delivery.create_offer_delivery_services': 'Offer Delivery Services',
+  'delivery.no_delivery_available': 'No delivery available',
   
   // Admin & Moderation
   'moderation.panel_title': 'Moderation Panel',

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useLocalization } from '../../../hooks/useLocalization';
 import Icon from '../../../components/Icon';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 interface TwoFactorAuthFlowProps {
   onBack: () => void;
@@ -43,10 +44,10 @@ const TwoFactorAuthFlow: React.FC<TwoFactorAuthFlowProps> = ({ onBack }) => {
         {apiError && <p className="text-xs text-red-500 text-center mt-2">{t(apiError)}</p>}
         <button
           type="submit"
-          className="login-button"
+          className="login-button flex justify-center items-center"
           disabled={loading || code.length !== 6}
         >
-          {loading ? '...' : t('auth.verify')}
+          {loading ? <LoadingSpinner size="sm" /> : t('auth.verify')}
         </button>
       </form>
        <div className="text-center mt-4">

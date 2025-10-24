@@ -3,6 +3,7 @@ import { useAuth } from '../../../../hooks/useAuth';
 import { useLocalization } from '../../../../hooks/useLocalization';
 import { AuthView } from '../../../../types';
 import PasswordStrengthMeter from '../PasswordStrengthMeter';
+import LoadingSpinner from '../../../../components/LoadingSpinner';
 
 interface RegistrationWizardProps {
   onSwitchView: (view: AuthView) => void;
@@ -253,8 +254,8 @@ const RegistrationWizard: React.FC<RegistrationWizardProps> = ({ onSwitchView })
 
         {(error || apiError) && <p className="text-xs text-red-500 text-center mt-2">{error || t(apiError!)}</p>}
 
-        <button className="submit ripple" type="submit" disabled={loading}>
-          {loading ? t('auth.registration.submitting') : t('auth.registration.submit')}
+        <button className="submit ripple flex justify-center items-center" type="submit" disabled={loading}>
+          {loading ? <LoadingSpinner size="sm" /> : t('auth.registration.submit')}
         </button>
         <p className="signin">
           {t('auth.go_to_login')}{' '}

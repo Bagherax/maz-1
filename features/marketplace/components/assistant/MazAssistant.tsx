@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Ad } from '../../../../types';
 import { GoogleGenAI } from '@google/genai';
 import Icon from '../../../../components/Icon';
+import CloseButton from '../../../../components/CloseButton';
+import LoadingSpinner from '../../../../components/LoadingSpinner';
 
 interface MazAssistantProps {
   ad: Ad;
@@ -98,9 +100,7 @@ const MazAssistant: React.FC<MazAssistantProps> = ({ ad, onClose }) => {
                  <div className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
                     Online
                  </div>
-                 <button onClick={onClose} className="text-gray-500 hover:text-gray-800 dark:hover:text-white">
-                    <Icon name="close" className="w-5 h-5"/>
-                 </button>
+                 <CloseButton onClick={onClose} className="text-[5px]" />
               </div>
             </div>
           </div>
@@ -121,14 +121,9 @@ const MazAssistant: React.FC<MazAssistantProps> = ({ ad, onClose }) => {
               </div>
             ))}
             {isLoading && (
-                 <div className="self-start flex items-center gap-2">
-                    <div className="bg-gray-200 dark:bg-zinc-700 rounded-lg p-2">
-                        <div className="flex items-center justify-center space-x-1">
-                            <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                            <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                            <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                        </div>
-                    </div>
+                <div className="self-start bg-gray-200 dark:bg-zinc-700 rounded-lg rounded-bl-none px-3 py-2">
+                    {/* Use the small spinner for a more compact "thinking" indicator */}
+                    <LoadingSpinner size="sm" />
                 </div>
             )}
           </div>

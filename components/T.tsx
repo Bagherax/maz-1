@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ReactNode } from 'react';
 import { useTranslation } from '../hooks/useTranslation';
-import Skeleton from './Skeleton';
 import { useLocalization } from '../hooks/useLocalization';
+import InlineLoader from './InlineLoader';
 
 interface TProps {
   children: ReactNode;
@@ -34,9 +34,7 @@ const T: React.FC<TProps> = ({ children }) => {
   const hasBeenTranslated = translatedText !== originalText;
 
   if (isLoading) {
-    // Render skeleton with an approximate width based on text length
-    const approxWidth = Math.max(10, Math.min(100, originalText.length * 0.6));
-    return <Skeleton className="w-full max-w-[--w]" style={{'--w': `${approxWidth}ch`} as React.CSSProperties} />;
+    return <InlineLoader />;
   }
   
   if (config.showOriginal && hasBeenTranslated) {

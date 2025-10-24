@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, ReactNode, useState } from 'react';
+import React, { createContext, useContext, useMemo, ReactNode, useState, useCallback } from 'react';
 // FIX: Imported UserTier and defined the Filters interface locally,
 // as the original import source is now obsolete and was causing a module resolution error.
 import { Ad, DisplayMode, SortOption, UserTier, Filters } from '../types';
@@ -54,19 +54,19 @@ export const MarketplaceUIProvider: React.FC<{ children: ReactNode }> = ({ child
         });
     }, [ads, filters, users]);
 
-    const handleFilterChange = (newFilters: Partial<Filters>) => {
+    const handleFilterChange = useCallback((newFilters: Partial<Filters>) => {
         setFilters(prev => ({ ...prev, ...newFilters }));
-    };
+    }, [setFilters]);
     
-    const handleResetFilters = () => {
+    const handleResetFilters = useCallback(() => {
         setSortBy('date-new-old');
         setFilters(prev => ({
             ...initialFilters,
             query: prev.query // Keep the search query
         }));
-    };
+    }, [setSortBy, setFilters]);
     
-    const toggleModeratorView = () => setIsModeratorView(prev => !prev);
+    const toggleModeratorView = useCallback(() => setIsModeratorView(prev => !prev), []);
 
 
     const value = {

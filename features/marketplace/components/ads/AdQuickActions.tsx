@@ -4,6 +4,7 @@ import { useTheme } from '../../../../hooks/useTheme';
 import { useView } from '../../../../App';
 import { Ad } from '../../../../types';
 import { useLocalization } from '../../../../hooks/useLocalization';
+import { useAuth } from '../../../../hooks/useAuth';
 
 interface AdQuickActionsProps {
   ad: Ad;
@@ -27,10 +28,16 @@ const AdQuickActions: React.FC<AdQuickActionsProps> = ({ ad }) => {
   const { toggleTheme } = useTheme();
   const { setView } = useView();
   const { t } = useLocalization();
+  const { promptLoginIfGuest } = useAuth();
 
   const handleBoost = () => alert('Paid Boost feature coming soon!');
   const handleSocial = () => alert('Social Media Boost feature coming soon!');
-  const handleCreateSimilar = () => setView({ type: 'create' });
+  const handleCreateSimilar = () => {
+    if (promptLoginIfGuest({ type: 'create' })) {
+        return;
+    }
+    setView({ type: 'create' });
+  };
 
   return (
     <div className="flex justify-around items-center p-1 border-t border-gray-100 dark:border-gray-700/50">

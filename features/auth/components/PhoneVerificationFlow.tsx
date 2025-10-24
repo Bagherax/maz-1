@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useLocalization } from '../../../hooks/useLocalization';
 import Icon from '../../../components/Icon';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 interface PhoneVerificationFlowProps {
   onBack: () => void;
@@ -63,8 +64,8 @@ const PhoneVerificationFlow: React.FC<PhoneVerificationFlowProps> = ({ onBack })
                     placeholder={t('auth.phone')}
                 />
                 {error && <p className="text-xs text-red-500 text-center">{error}</p>}
-                <button type="submit" className="login-button" disabled={loading}>
-                    {loading ? '...' : t('auth.send_code')}
+                <button type="submit" className="login-button flex justify-center items-center" disabled={loading}>
+                    {loading ? <LoadingSpinner size="sm" /> : t('auth.send_code')}
                 </button>
             </form>
         ) : (
@@ -82,8 +83,8 @@ const PhoneVerificationFlow: React.FC<PhoneVerificationFlowProps> = ({ onBack })
                     placeholder="------"
                 />
                 {error && <p className="text-xs text-red-500 text-center">{error}</p>}
-                <button type="submit" className="login-button" disabled={loading}>
-                    {loading ? '...' : t('auth.verify')}
+                <button type="submit" className="login-button flex justify-center items-center" disabled={loading}>
+                    {loading ? <LoadingSpinner size="sm" /> : t('auth.verify')}
                 </button>
                 <div className="text-center text-sm">
                     <button type="button" className="font-medium text-blue-500 hover:underline">

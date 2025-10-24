@@ -106,6 +106,33 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
   const [loginPromptAction, setLoginPromptAction] = useState<View | null>(null);
 
+  const loginAsGuest = useCallback(() => {
+    const guestUser: User = {
+        id: `guest-${Date.now()}`,
+        name: 'Guest',
+        email: '',
+        tier: 'normal',
+        createdAt: new Date(),
+        bio: 'Browsing the marketplace as a guest.',
+        isVerified: false,
+        rating: 0,
+        reviewCount: 0,
+        status: 'active',
+        cloudSync: defaultCloudSync,
+    };
+    setUser(guestUser);
+    setIsGuest(true);
+  }, []);
+
+  const logout = useCallback((reason?: string) => {
+    setUser(null);
+    setIsGuest(false);
+    localStorage.removeItem(JWT_TOKEN_KEY);
+    if (reason) {
+        // Use a temporary storage item to show a message after reload
+        sessionStorage.setItem('logoutReason', reason);
+    }
+  }, []);
 
   // --- Session Management ---
   useEffect(() => {
@@ -117,12 +144,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setUser(userFromToken);
           setIsGuest(false);
         } else {
+          // Invalid or expired token
           localStorage.removeItem(JWT_TOKEN_KEY);
+          loginAsGuest();
         }
+      } else {
+        // No token, this is a guest
+        loginAsGuest();
       }
     } catch (e) {
       console.error("Failed to initialize auth state", e);
       localStorage.removeItem(JWT_TOKEN_KEY);
+      loginAsGuest(); // Fallback to guest on error
     } finally {
       // Simulate a slightly longer load time to see the animation
       setTimeout(() => setLoading(false), 1500);
@@ -131,13 +164,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Check for token expiration periodically
     const interval = setInterval(() => {
         const token = localStorage.getItem(JWT_TOKEN_KEY);
+        // The token is the source of truth for a real user session.
+        // If a token exists but is invalid, it means a session has expired.
         if (token && !parseMockToken(token)) {
+            // This will trigger logout for the expired user.
+            // It will NOT affect guests, as they have no token.
             logout('auth.error_session_expired');
         }
     }, 60000); // Check every minute
 
     return () => clearInterval(interval);
-  }, []);
+  }, [loginAsGuest, logout]);
+
 
   const finalizeLogin = (loggedInUser: StoredUser) => {
       const { password: _p, ...userData } = loggedInUser;
@@ -282,35 +320,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }, 1000);
     });
   }, []);
-  
-  const logout = useCallback((reason?: string) => {
-    setUser(null);
-    setIsGuest(false);
-    localStorage.removeItem(JWT_TOKEN_KEY);
-    if (reason) {
-        // Use a temporary storage item to show a message after reload
-        sessionStorage.setItem('logoutReason', reason);
-    }
-  }, []);
-
-  const loginAsGuest = useCallback(() => {
-    const guestUser: User = {
-        id: `guest-${Date.now()}`,
-        name: 'Guest',
-        email: '',
-        tier: 'normal',
-        createdAt: new Date(),
-        bio: 'Browsing the marketplace as a guest.',
-        isVerified: false,
-        rating: 0,
-        reviewCount: 0,
-        status: 'active',
-        cloudSync: defaultCloudSync,
-    };
-    setUser(guestUser);
-    setIsGuest(true);
-    if (loading) setLoading(false);
-  }, [loading]);
 
   const promptLoginIfGuest = useCallback((nextAction?: View) => {
     if (isGuest) {
@@ -505,7 +514,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   return (
     <AuthContext.Provider value={value}>
       {loading ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm">
           <LoadingSpinner />
         </div>
       ) : (

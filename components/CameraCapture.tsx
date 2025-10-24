@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import Icon from './Icon';
+import CloseButton from './CloseButton';
 
 interface CameraCaptureProps {
   onCapture: (base64: string) => void;
@@ -65,9 +66,7 @@ const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose }) => 
                 <div className="w-14 h-14 rounded-full bg-white border-2 border-black"></div>
             </button>
         </div>
-         <button onClick={onClose} aria-label="Close camera" className="absolute top-2 right-2 p-2 bg-black/50 rounded-full text-white hover:bg-black/70">
-            <Icon name="close" className="w-5 h-5" />
-        </button>
+         <CloseButton onClick={onClose} className="absolute top-2 right-2 text-[5px]" />
       </div>
     </div>
   );

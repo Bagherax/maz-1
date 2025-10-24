@@ -73,6 +73,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  phone?: string;
   avatar?: string;
   timezone?: string;
   currency?: string;
@@ -226,11 +227,6 @@ export interface Ad {
   description: string;
   images: string[];
   videos?: string[];
-  documents?: {
-    name: string;
-    url: string;
-    previewUrl: string;
-  }[];
   price: number;
   currency: string;
   category: string;
@@ -304,6 +300,22 @@ export interface AdminConfig {
   paymentMethods: string[];
 }
 
+export type View = 
+  | { type: 'marketplace' } 
+  | { type: 'create' } 
+  | { type: 'profile'; id: string } 
+  | { type: 'cloud-sync' } 
+  | { type: 'language-settings' }
+  | { type: 'chat'; conversationId?: string }
+  // FIX: Add 'ad' view type to allow navigating to a specific ad detail view.
+  | { type: 'ad'; id: string };
+
+export interface AppContextType {
+    view: View;
+    setView: Dispatch<SetStateAction<View>>;
+}
+
+// FIX: Define MarketplaceState to be used by the context type.
 export interface MarketplaceState {
   ads: Ad[];
   users: User[];
@@ -311,20 +323,6 @@ export interface MarketplaceState {
   userTiers: UserTier[];
   reports: Report[];
   adminConfig: AdminConfig;
-}
-
-export type View = 
-  | { type: 'marketplace' } 
-  | { type: 'ad'; id: string } 
-  | { type: 'create' } 
-  | { type: 'profile'; id: string } 
-  | { type: 'cloud-sync' } 
-  | { type: 'language-settings' }
-  | { type: 'chat'; conversationId?: string };
-
-export interface AppContextType {
-    view: View;
-    setView: Dispatch<SetStateAction<View>>;
 }
 
 export interface MarketplaceContextType extends MarketplaceState {

@@ -3,6 +3,7 @@ import { useAuthConfig } from '../../../hooks/useAuthConfig';
 import { useLocalization } from '../../../hooks/useLocalization';
 import { LoginMethod, AuthElement } from '../../../types';
 import Icon from '../../../components/Icon';
+import CloseButton from '../../../components/CloseButton';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -48,9 +49,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold">{t('admin.title')}</h2>
-          <button onClick={onClose} aria-label={t('aria.close_admin_panel')} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-            <Icon name="close" className="w-6 h-6" />
-          </button>
+          <CloseButton onClick={onClose} className="text-[6px]" />
         </div>
 
         <div className="space-y-6">

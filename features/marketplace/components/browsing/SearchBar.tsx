@@ -25,18 +25,24 @@ const SearchBar: React.FC<SearchBarProps> = ({ onOpenAdminDashboard }) => {
 
 
   useEffect(() => {
-    if (debouncedQuery.trim()) {
+    // This effect syncs the debounced search input to the global filters context.
+    // It runs ONLY when the debounced query changes.
+    if (filters.query !== debouncedQuery) {
         onFilterChange({ query: debouncedQuery });
-        // Update recent searches
+    }
+  }, [debouncedQuery, onFilterChange, filters.query]);
+
+  useEffect(() => {
+    // This effect manages the recent searches list.
+    // It runs ONLY when a meaningful debounced query is produced.
+    if (debouncedQuery.trim()) {
         setRecentSearches(prev => {
             const newSearches = [debouncedQuery.trim(), ...prev.filter(s => s.toLowerCase() !== debouncedQuery.trim().toLowerCase())];
             return newSearches.slice(0, 5); // Keep last 5
         });
-    } else if (filters.query !== '') {
-        // Clear query if user deletes text
-        onFilterChange({ query: '' });
     }
-  }, [debouncedQuery, onFilterChange, setRecentSearches, filters.query]);
+  }, [debouncedQuery, setRecentSearches]);
+
 
   useEffect(() => {
     // Sync local query if filters are reset externally
@@ -145,9 +151,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onOpenAdminDashboard }) => {
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col items-center pt-4 pb-2">
                 {/* MAZ Logo */}
-                 <h1 className="text-4xl font-black bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-[length:200%_auto] bg-clip-text text-transparent animate-smoke-flow">
-                    MAZ
-                </h1>
+                 <h1 className="text-4xl font-black text-gray-800 dark:text-white tracking-tighter">MAZ</h1>
                 
                 <div className="flex items-center gap-3 w-full justify-center mt-2">
                     {/* New Animated Search Bar */}

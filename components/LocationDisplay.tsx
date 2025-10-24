@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGeolocation } from '../hooks/useGeolocation';
 import Icon from './Icon';
-import Skeleton from './Skeleton';
+import LoadingSpinner from './LoadingSpinner';
 
 const LocationDisplay: React.FC = () => {
     const { location, loading, error } = useGeolocation();
@@ -11,8 +11,7 @@ const LocationDisplay: React.FC = () => {
     if (loading) {
         return (
             <div className={containerClasses}>
-                <Skeleton className="w-5 h-5 rounded-full" />
-                <Skeleton className="w-24 h-4" />
+                <LoadingSpinner size="sm" />
             </div>
         );
     }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import AvatarUploader from '../../auth/components/registration/AvatarUploader';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 interface AvatarUpdateModalProps {
     isOpen: boolean;
@@ -47,9 +48,9 @@ const AvatarUpdateModal: React.FC<AvatarUpdateModalProps> = ({ isOpen, onClose }
                     <button 
                         onClick={handleSave}
                         disabled={!newAvatar || isSaving}
-                        className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:opacity-50"
+                        className="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:opacity-50 flex justify-center items-center min-w-[80px] min-h-[40px]"
                     >
-                        {isSaving ? 'Saving...' : 'Save'}
+                        {isSaving ? <LoadingSpinner size="sm" /> : 'Save'}
                     </button>
                 </div>
             </div>

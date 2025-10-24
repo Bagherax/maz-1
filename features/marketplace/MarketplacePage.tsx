@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Pagination from '../../components/Pagination';
 import { useSorting } from '../../hooks/useSorting';
 import AdGrid from './components/ads/AdGrid';
 import { useGeolocation } from '../../hooks/useGeolocation';
-import { useView } from '../../App';
 import { useMarketplaceUI } from '../../context/MarketplaceUIContext';
+import { useView } from '../../App';
 
 const ADS_PER_PAGE = 12;
 
@@ -12,13 +12,13 @@ const MarketplacePage: React.FC = () => {
     const { filteredAds, displayMode, sortBy } = useMarketplaceUI();
     const [currentPage, setCurrentPage] = useState(1);
     const { location: userLocation } = useGeolocation();
-    const { setView } = useView();
+    // FIX: Use the global view context to determine if a specific ad should be expanded on load.
+    const { view } = useView();
+    const [expandedAdId, setExpandedAdId] = useState<string | null>(
+      view.type === 'ad' ? view.id : null
+    );
     
     const sortedAds = useSorting(filteredAds, sortBy, userLocation);
-
-    const handleAdClick = (adId: string) => {
-        setView({ type: 'ad', id: adId });
-    };
 
     const totalPages = Math.ceil(sortedAds.length / ADS_PER_PAGE);
     const paginatedAds = sortedAds.slice((currentPage - 1) * ADS_PER_PAGE, currentPage * ADS_PER_PAGE);
@@ -31,7 +31,8 @@ const MarketplacePage: React.FC = () => {
                         <AdGrid
                             ads={paginatedAds}
                             displayMode={displayMode}
-                            onAdClick={handleAdClick}
+                            expandedAdId={expandedAdId}
+                            setExpandedAdId={setExpandedAdId}
                         />
                         <div className="mt-8">
                             <Pagination

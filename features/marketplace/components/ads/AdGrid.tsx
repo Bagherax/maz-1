@@ -3,21 +3,35 @@ import { Ad, DisplayMode } from '../../../../types';
 import AdCard from './AdCard';
 import ListViewItem from '../browsing/ListViewItem';
 import { useDisplayMode } from '../../../../hooks/useDisplayMode';
+import ExpandedAdView from './ExpandedAdView';
 
 interface AdGridProps {
   ads: Ad[];
   displayMode: DisplayMode;
-  onAdClick: (adId: string) => void;
+  expandedAdId: string | null;
+  // FIX: Corrected the type to match the dispatch function from useState.
+  setExpandedAdId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const AdGrid: React.FC<AdGridProps> = ({ ads, displayMode, onAdClick }) => {
+const AdGrid: React.FC<AdGridProps> = ({ ads, displayMode, expandedAdId, setExpandedAdId }) => {
   const { currentDisplayConfig } = useDisplayMode();
+
+  const handleAdClick = (adId: string) => {
+    setExpandedAdId(currentId => currentId === adId ? null : adId);
+  }
 
   if (displayMode === 'list') {
     return (
       <div className="space-y-4">
         {ads.map(ad => (
-          <ListViewItem key={ad.id} ad={ad} onExpandClick={() => onAdClick(ad.id)} />
+            <React.Fragment key={ad.id}>
+                <ListViewItem ad={ad} onExpandClick={() => handleAdClick(ad.id)} />
+                 {expandedAdId === ad.id && (
+                    <div className="animate-slide-down-fast">
+                        <ExpandedAdView ad={ad} onClose={() => setExpandedAdId(null)} />
+                    </div>
+                )}
+            </React.Fragment>
         ))}
       </div>
     );
@@ -26,12 +40,19 @@ const AdGrid: React.FC<AdGridProps> = ({ ads, displayMode, onAdClick }) => {
   return (
     <div className={`grid gap-6 ${currentDisplayConfig.gridClass}`}>
       {ads.map(ad => (
-        <AdCard
-          key={ad.id}
-          ad={ad}
-          displayMode={displayMode}
-          onExpandClick={() => onAdClick(ad.id)}
-        />
+        <React.Fragment key={ad.id}>
+            <AdCard
+              ad={ad}
+              displayMode={displayMode}
+              onExpandClick={() => handleAdClick(ad.id)}
+              isExpanded={expandedAdId === ad.id}
+            />
+            {expandedAdId === ad.id && (
+                <div className="col-span-full animate-slide-down-fast">
+                    <ExpandedAdView ad={ad} onClose={() => setExpandedAdId(null)} />
+                </div>
+            )}
+        </React.Fragment>
       ))}
     </div>
   );

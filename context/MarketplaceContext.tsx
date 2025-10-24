@@ -101,7 +101,7 @@ const updateUserTierIfNeeded = (user: User, tiers: UserTier[]): User => {
 
 
 export const MarketplaceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const { user: currentUser, logout } = useAuth();
+    const { user: currentUser, isGuest, logout } = useAuth();
     const { t } = useLocalization();
     const { addNotification } = useNotification();
     
@@ -160,7 +160,9 @@ export const MarketplaceProvider: React.FC<{ children: ReactNode }> = ({ childre
     };
 
     const createAd = async (adData: any): Promise<string> => {
-        if (!currentUser) throw new Error("User not authenticated");
+        if (!currentUser || isGuest) {
+          throw new Error("User must be logged in to create an ad.");
+        }
         
         const newAd: Ad = {
             id: `ad-${Date.now()}`, 

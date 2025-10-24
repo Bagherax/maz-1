@@ -8,6 +8,7 @@ import ActivityLog from './ActivityLog';
 import SystemConfiguration from './SystemConfiguration';
 import AnalyticsDashboard from './AnalyticsDashboard';
 import Icon from '../../components/Icon';
+import CloseButton from '../../components/CloseButton';
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -66,9 +67,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ isOpen, onClose, onOpen
               <button onClick={onOpenAuthAdminPanel} aria-label={t('aria.open_admin_panel')} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 ripple">
                   <Icon name="cog" className="w-6 h-6" />
               </button>
-              <button onClick={onClose} aria-label={t('aria.close_admin_panel')} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 ripple">
-                <Icon name="close" className="w-6 h-6" />
-              </button>
+              <CloseButton onClick={onClose} className="text-[6px]" />
             </div>
           </div>
           <nav className="mt-4 -mb-px">

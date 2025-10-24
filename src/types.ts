@@ -1,7 +1,3 @@
-
-
-
-
 import { ReactNode, Dispatch, SetStateAction } from 'react';
 
 export type Theme = 'light' | 'dark';
@@ -77,6 +73,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  // FIX: Added optional phone property to User interface to match usage in api.ts
+  phone?: string;
   avatar?: string;
   timezone?: string;
   currency?: string;

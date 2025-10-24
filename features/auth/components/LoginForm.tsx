@@ -5,6 +5,7 @@ import SocialLogins from './SocialLogins';
 import { LoginMethod, AuthView } from '../../../types';
 import { useAuthConfig } from '../../../hooks/useAuthConfig';
 import Icon from '../../../components/Icon';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 interface LoginFormProps {
   onSocialLogin: (provider: LoginMethod) => void;
@@ -18,7 +19,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSocialLogin, onSwitchView }) =>
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   
-  const { login, loading, error: apiError, loginAsGuest } = useAuth();
+  const { login, loading, error: apiError } = useAuth();
   const { t } = useLocalization();
   const { authConfig } = useAuthConfig();
   const { visibleElements } = authConfig;
@@ -99,22 +100,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSocialLogin, onSwitchView }) =>
         {apiError && <p className="text-xs text-red-500 text-center mt-2">{t(apiError)}</p>}
 
         <button
-          className="login-button ripple" 
+          className="login-button ripple flex justify-center items-center" 
           type="submit"
           disabled={loading}
         >
-          {loading ? '...' : t('auth.login_button')}
+          {loading ? <LoadingSpinner size="sm" /> : t('auth.login_button')}
         </button>
       </form>
-
-      <button
-        type="button"
-        onClick={loginAsGuest}
-        className="w-full text-center py-3 my-2 font-semibold border rounded-2xl transition-colors ripple flex items-center justify-center gap-2 bg-cyan-50 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-800/50 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-100 dark:hover:bg-cyan-900/40"
-      >
-        <Icon name="eye" className="w-5 h-5" />
-        <span>{t('auth.guest_button')}</span>
-      </button>
 
       <SocialLogins onSocialLogin={onSocialLogin} />
       <div className="text-center mt-4">

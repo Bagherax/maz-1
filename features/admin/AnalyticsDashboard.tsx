@@ -66,7 +66,8 @@ const AnalyticsDashboard: React.FC = () => {
              const commission = ad.price * (adminConfig.commissionRates[ad.seller.tier] / 100);
              tierRevenue[ad.seller.tier] += commission;
         });
-        return Object.entries(tierRevenue).map(([label, value]) => ({ label: label as string, value }));
+        // FIX: Add type assertion to ensure Object.entries result is typed correctly.
+        return (Object.entries(tierRevenue) as [string, number][]).map(([label, value]) => ({ label, value }));
     }, [ads, adminConfig.commissionRates]);
 
     // Ads by Category
@@ -75,7 +76,8 @@ const AnalyticsDashboard: React.FC = () => {
             acc[ad.category] = (acc[ad.category] || 0) + 1;
             return acc;
         }, {} as Record<string, number>);
-        return Object.entries(counts).map(([label, value]) => ({ label, value }));
+        // FIX: Add type assertion to ensure Object.entries result is typed correctly.
+        return (Object.entries(counts) as [string, number][]).map(([label, value]) => ({ label, value }));
     }, [ads]);
     
     // Users by Country
@@ -85,7 +87,8 @@ const AnalyticsDashboard: React.FC = () => {
             acc[country] = (acc[country] || 0) + 1;
             return acc;
         }, {} as Record<string, number>);
-        return Object.entries(counts).map(([label, value]) => ({ label, value }));
+        // FIX: Add type assertion to ensure Object.entries result is typed correctly.
+        return (Object.entries(counts) as [string, number][]).map(([label, value]) => ({ label, value }));
     }, [ads]);
 
     return (

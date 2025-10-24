@@ -10,6 +10,7 @@ import { useView } from '../../../../App';
 import LocationDisplay from '../../../../components/LocationDisplay';
 import ThemeSwitcher from '../../../../components/ThemeSwitcher';
 import LanguageSwitcher from '../../../../components/LanguageSwitcher';
+import CloseButton from '../../../../components/CloseButton';
 
 interface SearchExpansionPanelProps {
   isExpanded: boolean;
@@ -55,7 +56,7 @@ const SearchExpansionPanel: React.FC<SearchExpansionPanelProps> = ({ isExpanded,
     isModeratorView,
     toggleModeratorView,
   } = useMarketplaceUI();
-  const { user, isAuthenticated, isGuest } = useAuth();
+  const { user, isAuthenticated, isGuest, promptLoginIfGuest } = useAuth();
   const { t } = useLocalization();
   const { setView } = useView();
 
@@ -65,19 +66,23 @@ const SearchExpansionPanel: React.FC<SearchExpansionPanelProps> = ({ isExpanded,
     });
   };
 
+  const handleCreateAdClick = () => {
+    if (promptLoginIfGuest({ type: 'create' })) {
+        return;
+    }
+    setView({ type: 'create' });
+  };
+
   return (
     <div className={`
       overflow-hidden transition-all duration-500 ease-in-out
       ${isExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}
     `}>
       <div className="relative py-4 animate-slide-down-fast">
-        <button
+        <CloseButton
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 p-2 text-gray-500 dark:text-gray-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
-          aria-label={t('controls.close')}
-        >
-          <Icon name="close" className="w-6 h-6" />
-        </button>
+          className="absolute top-4 right-4 z-20 text-[6px]"
+        />
         
         {/* NEW TOOLBAR */}
         <div className="flex items-center justify-center flex-wrap gap-3 mb-6 px-4">
@@ -141,7 +146,7 @@ const SearchExpansionPanel: React.FC<SearchExpansionPanelProps> = ({ isExpanded,
           {/* Section 1: Actions */}
           <div className="md:col-span-1 space-y-6">
               <Section title={t('smart_search.quick_actions')}>
-                  <ActionButton icon="plus" label={t('smart_search.add_new_ad')} onClick={() => setView({type: 'create'})} />
+                  <ActionButton icon="plus" label={t('smart_search.add_new_ad')} onClick={handleCreateAdClick} />
                   <ActionButton icon="rocket-launch" label={t('controls.add_paid_ad')} onClick={() => alert('Paid Ads feature coming soon!')} />
                   <ActionButton icon="share" label={t('controls.social_booster')} onClick={() => alert('Social Booster feature coming soon!')} />
                   <ActionButton icon="video" label={t('social_commerce.liveSelling')} onClick={() => alert(t('social_commerce.liveSelling') + ' feature coming soon!')} iconColor="text-red-500" />

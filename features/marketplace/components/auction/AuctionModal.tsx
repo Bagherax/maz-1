@@ -7,6 +7,7 @@ import { useAuth } from '../../../../hooks/useAuth';
 import { useMarketplace } from '../../../../context/MarketplaceContext';
 import { useChat } from '../../../../hooks/useChat';
 import { useView } from '../../../../App';
+import CloseButton from '../../../../components/CloseButton';
 
 interface AuctionModalProps {
   isOpen: boolean;
@@ -111,7 +112,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ isOpen, onClose, ad }) => {
       >
         <header className="p-4 border-b dark:border-gray-700 flex justify-between items-center shrink-0">
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 truncate pr-4">{ad.title}</h2>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><Icon name="close" className="w-6 h-6" /></button>
+          <CloseButton onClick={onClose} className="text-[6px]" />
         </header>
 
         <main className="flex-grow overflow-y-auto p-6 space-y-6">

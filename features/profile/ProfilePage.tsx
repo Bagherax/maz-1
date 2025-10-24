@@ -9,6 +9,7 @@ import UserTierBadge from '../marketplace/components/users/UserTierBadge';
 import AdCard from '../marketplace/components/ads/AdCard';
 import { useView } from '../../App';
 import AvatarUpdateModal from './components/AvatarUpdateModal';
+import ExpandedAdView from '../marketplace/components/ads/ExpandedAdView';
 
 interface ProfilePageProps {
   userId: string;
@@ -22,6 +23,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
 
   const [editingAdId, setEditingAdId] = useState<string | null>(null);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+  // FIX: Added state to manage which ad is expanded inline.
+  const [expandedAdId, setExpandedAdId] = useState<string | null>(null);
 
   const viewedUser = getUserById(userId);
   const ads = getAdsBySellerId(userId);
@@ -39,7 +42,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
     console.log("Moderation action performed. UI reflects new state from context.");
   };
 
-  const handleSaveAd = (adId: string, updatedData: { title: string; description: string; price: number }) => {
+  const handleSaveAd = (adId: string, updatedData: { title: string; description: string; price: number; images: string[]; videos: string[] }) => {
     updateAd(adId, updatedData);
     setEditingAdId(null);
   };
@@ -144,18 +147,26 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
             <div className="md:col-span-2">
               <h2 className="text-2xl font-bold mb-4">{t('profile.my_ads')}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {/* FIX: Refactored to support inline expansion of ad details. */}
                 {ads.length > 0 ? ads.map(ad => (
-                  <AdCard 
-                      key={ad.id} 
+                  <React.Fragment key={ad.id}>
+                    <AdCard 
                       ad={ad} 
                       displayMode="standard" 
-                      onExpandClick={() => setView({ type: 'ad', id: ad.id })}
+                      onExpandClick={() => setExpandedAdId(expandedAdId === ad.id ? null : ad.id)}
+                      isExpanded={expandedAdId === ad.id}
                       isEditable={isOwnProfile}
                       isEditing={editingAdId === ad.id}
                       onEditClick={() => setEditingAdId(ad.id)}
                       onCancel={() => setEditingAdId(null)}
                       onSave={(updatedData) => handleSaveAd(ad.id, updatedData)}
-                  />
+                    />
+                    {expandedAdId === ad.id && (
+                      <div className="col-span-1 sm:col-span-2 animate-slide-down-fast">
+                        <ExpandedAdView ad={ad} onClose={() => setExpandedAdId(null)} />
+                      </div>
+                    )}
+                  </React.Fragment>
                 )) : (
                   <p className="text-gray-500 col-span-2">{t('profile.no_active_ads')}</p>
                 )}

@@ -333,6 +333,9 @@ export const ar = {
   'ad.create.step2': 'الوسائط',
   'ad.create.step3': 'التوصيل والمزاد',
   'ad.create.step4': 'مراجعة',
+  'ad.create.section.details': 'تفاصيل الإعلان',
+  'ad.create.section.media': 'الوسائط',
+  'ad.create.section.delivery_auction': 'التوصيل والمزاد',
   'ad.create.next_step': 'الخطوة التالية',
   'ad.create.prev_step': 'الخطوة السابقة',
   'ad.create.post_ad': 'نشر الإعلان',
@@ -437,6 +440,8 @@ export const ar = {
   'delivery.create_days_placeholder': 'على سبيل المثال، 3-5',
   'delivery.create_instructions_placeholder': 'قدم عنوان الاستلام والأوقات المتاحة...',
   'delivery.create_international_label': 'السماح بالشحن الدولي',
+  'delivery.create_offer_delivery_services': 'توفير خدمات التوصيل',
+  'delivery.no_delivery_available': 'التوصيل غير متاح',
   
   // Admin & Moderation
   'moderation.panel_title': 'لوحة الإشراف',

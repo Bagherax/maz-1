@@ -21,7 +21,6 @@ import CreateAdPage from './features/marketplace/CreateAdPage';
 import SearchBar from './features/marketplace/components/browsing/SearchBar';
 import CloudSyncSettings from './features/profile/components/CloudSyncSettings';
 import LanguageSettings from './features/profile/components/LanguageSettings';
-import AdDetailPanel from './features/marketplace/components/ads/AdDetailPanel';
 import LoginPrompt from './components/LoginPrompt';
 import AdminDashboard from './features/admin/AdminDashboard';
 import ChatPage from './features/chat/ChatPage';
@@ -40,7 +39,6 @@ export const useView = (): AppContextType => {
 const AppContent: React.FC = () => {
   const { user, isAuthenticated, isGuest, postLoginAction, clearPostLoginAction } = useAuth();
   const [view, setView] = useState<View>({ type: 'marketplace' });
-  const { getAdById } = useMarketplace();
   const [isAdminDashboardOpen, setIsAdminDashboardOpen] = useState(false);
   const [isAuthAdminPanelOpen, setIsAuthAdminPanelOpen] = useState(false);
 
@@ -51,8 +49,6 @@ const AppContent: React.FC = () => {
         clearPostLoginAction();
     }
   }, [isAuthenticated, isGuest, postLoginAction, setView, clearPostLoginAction]);
-
-  const selectedAd = view.type === 'ad' ? getAdById(view.id) : undefined;
 
   const renderMainView = () => {
     switch (view.type) {
@@ -66,8 +62,9 @@ const AppContent: React.FC = () => {
         return <LanguageSettings />;
       case 'chat':
         return <ChatPage conversationId={view.type === 'chat' ? view.conversationId : undefined} />;
+      // FIX: Handle 'ad' view type to render the marketplace page, which will show the specific ad expanded.
+      case 'ad':
       case 'marketplace':
-      case 'ad': // MarketplacePage is always visible now, panel slides over
       default:
         return <MarketplacePage />;
     }
@@ -79,12 +76,11 @@ const AppContent: React.FC = () => {
         <SearchBar 
           onOpenAdminDashboard={() => setIsAdminDashboardOpen(true)}
         />
-        <main className="pt-20 pb-4 transition-all duration-500" style={{ filter: selectedAd ? 'blur(4px)' : 'none' }}>
+        <main className="pt-20 pb-4 transition-all duration-500">
           <ErrorBoundary>
             {renderMainView()}
           </ErrorBoundary>
         </main>
-        <AdDetailPanel ad={selectedAd} isOpen={!!selectedAd} onClose={() => setView({ type: 'marketplace' })} />
         <AdminDashboard 
           isOpen={isAdminDashboardOpen} 
           onClose={() => setIsAdminDashboardOpen(false)}

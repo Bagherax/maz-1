@@ -18,6 +18,14 @@ const tierStyles: Record<UserTier['level'], string> = {
 
 const UserTierBadge: React.FC<UserTierBadgeProps> = ({ tier }) => {
   const style = tierStyles[tier];
+
+  if (tier === 'MAZ') {
+    return (
+      <span className={`inline-flex items-center justify-center px-3 py-1 text-xs font-bold rounded-full ${style}`}>
+        MAZ
+      </span>
+    );
+  }
   
   return (
     <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider ${style}`}>

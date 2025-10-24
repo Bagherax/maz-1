@@ -62,7 +62,9 @@ const db = {
             id: '1', name: 'Admin', email: adminCredential, password: adminCredential,
             tier: 'MAZ', isAdmin: true, status: 'active',
             createdAt: new Date(), bio: "Marketplace administrator.", isVerified: true, rating: 5, reviewCount: 999,
-            twoFactorEnabled: false, ipAddress: '127.0.0.1',
+            twoFactorEnabled: false, ipAddress: '127.0.0.1', 
+// FIX: phone property was missing, added it to conform to StoredUser type
+phone: '+1-555-0199',
             cloudSync: defaultCloudSync
         };
         const initialUsers = MOCK_SELLERS.map(u => ({...u, password: 'password123'}));
@@ -170,6 +172,8 @@ export const register = (data: { name: string, email: string, password: string }
         rating: 0,
         reviewCount: 0,
         status: 'active',
+        // FIX: phone property was missing, added it to conform to StoredUser type
+        phone: `+1-555-${Math.floor(1000 + Math.random() * 9000)}`,
         cloudSync: defaultCloudSync,
     };
     db.users.set([...users, newUser]);
@@ -187,6 +191,8 @@ export const loginWithProvider = (provider: LoginMethod) => apiFetch(() => {
             id: `oauth-${Date.now()}`, name: `${provider} User`, email: mockEmail,
             tier: 'normal', createdAt: new Date(), bio: 'Joined via social!', isVerified: true,
             rating: 0, reviewCount: 0, status: 'active', password: 'mock_password',
+            // FIX: phone property was missing, added it to conform to StoredUser type
+            phone: `+1-555-${Math.floor(1000 + Math.random() * 9000)}`,
             cloudSync: defaultCloudSync
         };
         user = newUser;
@@ -202,6 +208,8 @@ export const loginWithPhone = (phone: string) => apiFetch(() => {
         id: `phone-${Date.now()}`, name: `User ${phone.slice(-4)}`, email: `${phone}@example.com`,
         tier: 'normal', createdAt: new Date(), bio: 'Joined with phone.', isVerified: true,
         rating: 0, reviewCount: 0, status: 'active', password: 'mock_password',
+        // FIX: phone property was missing, added it to conform to StoredUser type
+        phone: phone,
         cloudSync: defaultCloudSync
     };
     db.users.set([...db.users.get(), newUser]);
